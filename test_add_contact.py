@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
-import unittest
 from contact import Contact
 
 class TestAddContact(unittest.TestCase):

@@ -1,6 +1,6 @@
 __author__ = 'mla'
 from selenium.webdriver.support.ui import Select
-
+#from fixture.application import Application #ASK4IT: czy tego nie potrzebujemy dzieki temu ze przenieslismy fixtury do conftest.py i 'przedrostek' "app." odwoluje sie do nich?
 
 class ContactHelper:
     def __init__(self, app):
@@ -68,3 +68,15 @@ class ContactHelper:
         wd.find_element_by_name("notes").send_keys(contact.notes)
         # submit contact creation
         wd.find_element_by_xpath("(//input[@name='submit'])[2]").click()
+
+    def delete_first_contact(self, app):
+        wd = self.app.wd
+        app.open_home_page() #ASK4IT: czy "app." dziala dzieki conftest.py? Niech mi to ktos wytlumaczy prosze...
+        # select first contact
+        wd.find_element_by_name("selected[]").click()
+        # submin delation
+        wd.find_element_by_name("Delete").click()
+        # close alert
+        wd.assertConfirmation("Delete 1 addresses?").accept()
+        # home_page opened Application.open_home_page()
+

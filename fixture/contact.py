@@ -6,6 +6,10 @@ class ContactHelper:
     def __init__(self, app):
         self.app = app
 
+    def open_home_page2(self):
+        wd = self.app.wd
+        wd.get("http://localhost/addressbook/")
+
     def create(self, contact):
         wd = self.app.wd
         # init new-contact creation
@@ -69,14 +73,14 @@ class ContactHelper:
         # submit contact creation
         wd.find_element_by_xpath("(//input[@name='submit'])[2]").click()
 
-    def delete_first_contact(self, app):
+    def delete_first_contact(self):
         wd = self.app.wd
-        app.open_home_page() #ASK4IT: czy "app." dziala dzieki conftest.py? Niech mi to ktos wytlumaczy prosze...
+        self.open_home_page2() #ASK4IT: jak zrobic aby dzialalo przez "app." z conftest.py? Niech mi to ktos wytlumaczy prosze...
         # select first contact
         wd.find_element_by_name("selected[]").click()
         # submin delation
-        wd.find_element_by_name("Delete").click()
+        wd.find_element_by_xpath("//input[@value='Delete']").click()
         # close alert
-        wd.assertConfirmation("Delete 1 addresses?").accept()
+        wd.switch_to.alert.accept()
         # home_page opened Application.open_home_page()
 

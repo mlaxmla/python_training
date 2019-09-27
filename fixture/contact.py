@@ -2,6 +2,7 @@ __author__ = 'mla'
 from selenium.webdriver.support.ui import Select
 #from fixture.application import Application #ASK4IT: czy tego nie potrzebujemy dzieki temu ze przenieslismy fixtury do conftest.py i 'przedrostek' "app." odwoluje sie do nich?
 
+
 class ContactHelper:
     def __init__(self, app):
         self.app = app
@@ -78,6 +79,7 @@ class ContactHelper:
 
     def modify_first_contact(self, new_contact_data):
         wd = self.app.wd
+        self.open_home_page2()
         # init first contact edit
         wd.find_element_by_xpath("//a//img[@title='Edit']").click() #  and @xpath='1'
         #self.modify(new_group_data)

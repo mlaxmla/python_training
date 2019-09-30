@@ -1,6 +1,7 @@
 __author__ = 'mla'
 from selenium.webdriver.support.ui import Select
-#from fixture.application import Application #ASK4IT: czy tego nie potrzebujemy dzieki temu ze przenieslismy fixtury do conftest.py i 'przedrostek' "app." odwoluje sie do nich?
+from model.contact import Contact
+# from fixture.application import Application #ASK4IT: czy tego nie potrzebujemy dzieki temu ze przenieslismy fixtury do conftest.py i 'przedrostek' "app." odwoluje sie do nich?
 
 
 class ContactHelper:
@@ -98,3 +99,30 @@ class ContactHelper:
         wd = self.app.wd
         self.open_home_page2()
         return len(wd.find_elements_by_name("selected[]"))
+
+    def get_contacts_list(self):
+        wd = self.app.wd
+        self.open_home_page2()
+        contacts = []
+        r = 1
+        # rows = len(wd.find_elements_by_xpath("//*[@name='entry']"))
+        for element in wd.find_elements_by_xpath("//*[@name='entry']"): # "//a//img[@title='Edit']"
+        #for r in range(1, rows+1)
+            id = element.find_element_by_name("selected[]").get_attribute("value")
+            lastname_text = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr["+str(r+1)+"]/td[2]").text
+            firstname_text = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr["+str(r+1)+"]/td[3]").text
+            r = r + 1
+            # maintable > tbody > tr:nth-child(3) > td:nth-child(2)
+            # maintable > tbody > tr:nth-child(6) > td:nth-child(2)
+            # 1 wiersz (bez tytułowego), 2 kolumna "Last name"
+            # //*[@id="maintable"]/tbody/tr[2]/td[2]
+            # 1 wiersz (bez tytułowego), 3 kolumna "First name"
+            # //*[@id="maintable"]/tbody/tr[2]/td[3]
+            #
+            # 2 wiersz (bez tytułowego), 2 kolumna "Last name"
+            # //*[@id="maintable"]/tbody/tr[3]/td[2]
+            # 2 wiersz (bez tytułowego), 3 kolumna "First name"
+            # //*[@id="maintable"]/tbody/tr[3]/td[3]
+            # id = element.find_element_by_name("selected[]").get_attribute("value")
+            contacts.append(Contact(lastname=lastname_text, firstname=firstname_text, id=id))
+        return contacts

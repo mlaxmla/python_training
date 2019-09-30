@@ -71,10 +71,13 @@ class ContactHelper:
         self.change_field_value("notes", contact.notes)
 
     def delete_first_contact(self):
+        self.delete_contact_by_index(0)
+
+    def delete_contact_by_index(self, index):
         wd = self.app.wd
         self.open_home_page2() #ASK4IT: jak zrobic aby dzialalo przez "app." z conftest.py? Niech mi to ktos wytlumaczy prosze...
         # select first contact
-        wd.find_element_by_name("selected[]").click()
+        wd.find_elements_by_name("selected[]")[index].click()
         # submin delation
         wd.find_element_by_xpath("//input[@value='Delete']").click()
         # close alert
@@ -83,10 +86,13 @@ class ContactHelper:
         self.contact_cache = None
 
     def modify_first_contact(self, new_contact_data):
+        self.modify_contact_by_index(0, new_contact_data)
+
+    def modify_contact_by_index(self, index, new_contact_data):
         wd = self.app.wd
         self.open_home_page2()
         # init first contact edit
-        wd.find_element_by_xpath("//a//img[@title='Edit']").click() #  and @xpath='1'
+        wd.find_elements_by_xpath("//a//img[@title='Edit']")[index].click() #  and @xpath='1'
         #self.modify(new_group_data)
         self.fill_contact_form(new_contact_data)
         # submit update

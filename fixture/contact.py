@@ -129,7 +129,7 @@ class ContactHelper:
                 self.contact_cache.append(Contact(lastname=lastname_text, firstname=firstname_text, id=id, all_phones=all_phones_from_contactlist)) # home=all_phones[0], work=all_phones[1], mobile=all_phones[2], phone2=all_phones[3]
         return list(self.contact_cache)
 
-    #how2FIX-IT-Andrey?
+    #how2FIX-IT-Alexei?
     #def get_contacts_list_webinar(self):
     #    if self.contact_cache is None:
     #        wd = self.app.wd
@@ -167,15 +167,23 @@ class ContactHelper:
         firstname = wd.find_element_by_name("firstname").get_attribute("value")
         lastname = wd.find_element_by_name("lastname").get_attribute("value")
         id = wd.find_element_by_name("id").get_attribute("value")
-        home = wd.find_element_by_name("home").get_attribute("value")
-        work = wd.find_element_by_name("work").get_attribute("value")
-        mobile = wd.find_element_by_name("mobile").get_attribute("value")
-        phone2 = wd.find_element_by_name("phone2").get_attribute("value")
-        all_phones_from_edit = ([home]+[work]+[mobile]+[phone2])
-        all_phones_from_edit_witohout_nulls = []
+        home = (None if wd.find_element_by_name("home").get_attribute("value") == '' else wd.find_element_by_name("home").get_attribute("value"))
+        work = (None if wd.find_element_by_name("work").get_attribute("value") == '' else wd.find_element_by_name("work").get_attribute("value"))
+        mobile = (None if wd.find_element_by_name("mobile").get_attribute("value") == '' else wd.find_element_by_name("mobile").get_attribute("value"))
+        phone2 = (None if wd.find_element_by_name("phone2").get_attribute("value") == '' else wd.find_element_by_name("phone2").get_attribute("value"))
+        all_phones_from_edit = [home]+[work]+[mobile]+[phone2]
+        all_phones_from_edit_witohout_nulls = (None if all_phones_from_edit is None else [])
         for val in all_phones_from_edit:
-            if val != '' :
+            if val != '' and val != None and all_phones_from_edit is not None :
                 all_phones_from_edit_witohout_nulls.append(self.clear(val))
-        return Contact(firstname=firstname, lastname=lastname, id=id, all_phones=all_phones_from_edit_witohout_nulls) # home=home, work=work, mobile=mobile, phone2=phone2
+        return Contact(firstname=firstname, lastname=lastname, id=id, home=home, work=work, mobile=mobile, phone2=phone2, all_phones=all_phones_from_edit_witohout_nulls)
 
-
+    def get_contacts_from_view_page(self, index):
+        wd = self.app.wd
+        self.open_contact_view_by_index(index)
+        text = wd.find_element_by_id("content").text
+        home = (None if re.search("H: (.*)", text) is None else re.search("H: (.*)", text).group(1))
+        work = (None if re.search("W: (.*)", text) is None else re.search("W: (.*)", text).group(1))
+        mobile = (None if re.search("M: (.*)", text) is None else re.search("M: (.*)", text).group(1))
+        phone2 = (None if re.search("P: (.*)", text) is None else re.search("P: (.*)", text).group(1))
+        return Contact(home=home, work=work, mobile=mobile, phone2=phone2) # home=home, work=work, mobile=mobile, phone2=phone2 # firstname=firstname, lastname=lastname, id=id, all_phones=all_phones_from_edit_witohout_nulls

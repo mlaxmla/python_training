@@ -1,6 +1,8 @@
 __author__ = 'mla'
 from selenium.webdriver.support.ui import Select
 from model.contact import Contact
+import re
+
 # from fixture.application import Application #ASK4IT: czy tego nie potrzebujemy dzieki temu ze przenieslismy fixtury do conftest.py i 'przedrostek' "app." odwoluje sie do nich?
 
 
@@ -122,6 +124,58 @@ class ContactHelper:
                 id = element.find_element_by_name("selected[]").get_attribute("value")
                 lastname_text = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr["+str(r+1)+"]/td[2]").text
                 firstname_text = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr["+str(r+1)+"]/td[3]").text
+                all_phones_from_contactlist = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr["+str(r+1)+"]/td[6]").text.splitlines()
                 r = r + 1
-                self.contact_cache.append(Contact(lastname=lastname_text, firstname=firstname_text, id=id))
+                self.contact_cache.append(Contact(lastname=lastname_text, firstname=firstname_text, id=id, all_phones=all_phones_from_contactlist)) # home=all_phones[0], work=all_phones[1], mobile=all_phones[2], phone2=all_phones[3]
         return list(self.contact_cache)
+
+    #how2FIX-IT-Andrey?
+    #def get_contacts_list_webinar(self):
+    #    if self.contact_cache is None:
+    #        wd = self.app.wd
+    #        self.open_home_page2()
+    #        self.contact_cache = []
+    #        for row in wd.find_elements_by_name("entry"):
+    #            cells = row.find_elements_by_tag_name("td")
+    #            id = cells[0].find_element_by_tag_name("input").get_attribute("value")
+    #            firstname_text = cells[1].text
+    #            lastname_text = cells[2].text
+    #            self.contact_cache.append(Contact(lastname=lastname_text, firstname=firstname_text, id=id))
+    #    return list(self.contact_cache)
+
+
+    def open_contact_to_edit_by_index(self, index):
+        wd = self.app.wd
+        self.open_home_page2()
+        row = wd.find_elements_by_name("entry")[index]
+        cell = row.find_elements_by_tag_name("td")[7]
+        cell.find_element_by_tag_name("a").click()
+
+    def open_contact_view_by_index(self, index):
+        wd = self.app.wd
+        self.open_home_page2()
+        row = wd.find_elements_by_name("entry")[index]
+        cell = row.find_elements_by_tag_name("td")[6]
+        cell.find_element_by_tag_name("a").click()
+
+    def clear(self, s):
+        return re.sub("[() -=]", "", s)
+
+    def get_contact_info_from_edit_page(self, index):
+        wd = self.app.wd
+        self.open_contact_to_edit_by_index(index)
+        firstname = wd.find_element_by_name("firstname").get_attribute("value")
+        lastname = wd.find_element_by_name("lastname").get_attribute("value")
+        id = wd.find_element_by_name("id").get_attribute("value")
+        home = wd.find_element_by_name("home").get_attribute("value")
+        work = wd.find_element_by_name("work").get_attribute("value")
+        mobile = wd.find_element_by_name("mobile").get_attribute("value")
+        phone2 = wd.find_element_by_name("phone2").get_attribute("value")
+        all_phones_from_edit = ([home]+[work]+[mobile]+[phone2])
+        all_phones_from_edit_witohout_nulls = []
+        for val in all_phones_from_edit:
+            if val != '' :
+                all_phones_from_edit_witohout_nulls.append(self.clear(val))
+        return Contact(firstname=firstname, lastname=lastname, id=id, all_phones=all_phones_from_edit_witohout_nulls) # home=home, work=work, mobile=mobile, phone2=phone2
+
+

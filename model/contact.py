@@ -32,7 +32,7 @@ class Contact:
         self.all_emails_from_home_page = all_emails_from_home_page
 
     def __repr__(self):
-        return "%s:%s:%s" % (self.id, self.lastname, self.firstname) # lepiej byłoby tak "%s:%s:%s" % (self.id, self.firstname, self.lastname), ale jeszcze nie umiem podmienić w liście elelemntu o określonym id, a na widoku contacts mamy sortowanie wg lastname, firstname
+        return "%s:%s:%s:%s" % (self.id, self.lastname, self.firstname, self.nickname) # lepiej byłoby tak "%s:%s:%s" % (self.id, self.firstname, self.lastname), ale jeszcze nie umiem podmienić w liście elelemntu o określonym id, a na widoku contacts mamy sortowanie wg lastname, firstname
 
     def __eq__(self, other):
         return (self.id is None or other.id is None or self.id == other.id) and self.firstname == other.firstname and self.lastname == other.lastname # and self.address == other.address

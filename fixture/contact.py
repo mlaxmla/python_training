@@ -125,8 +125,26 @@ class ContactHelper:
                 lastname_text = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr["+str(r+1)+"]/td[2]").text
                 firstname_text = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr["+str(r+1)+"]/td[3]").text
                 all_phones_from_contactlist = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr["+str(r+1)+"]/td[6]").text.splitlines()
+                all_phones = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr[" + str(r + 1) + "]/td[6]").text
                 r = r + 1
-                self.contact_cache.append(Contact(lastname=lastname_text, firstname=firstname_text, id=id, all_phones=all_phones_from_contactlist)) # home=all_phones[0], work=all_phones[1], mobile=all_phones[2], phone2=all_phones[3]
+                self.contact_cache.append(Contact(lastname=lastname_text, firstname=firstname_text, id=id, all_phones_from_home_page=all_phones))
+        return list(self.contact_cache)
+
+    def get_all_contacts_list(self):
+        if self.contact_cache is None:
+            wd = self.app.wd
+            self.open_home_page2()
+            self.contact_cache = []
+            r = 1
+            for element in wd.find_elements_by_xpath("//*[@name='entry']"): # "//a//img[@title='Edit']"
+                id = element.find_element_by_name("selected[]").get_attribute("value")
+                lastname_text = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr["+str(r+1)+"]/td[2]").text
+                firstname_text = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr["+str(r+1)+"]/td[3]").text
+                address_text = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr["+str(r+1)+"]/td[4]").text
+                all_emails = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr[" + str(r + 1) + "]/td[5]").text
+                all_phones = element.find_element_by_xpath("//*[@id='maintable']/tbody/tr[" + str(r + 1) + "]/td[6]").text
+                r = r + 1
+                self.contact_cache.append(Contact(lastname=lastname_text, firstname=firstname_text, id=id, address=address_text, all_emails_from_home_page=all_emails, all_phones_from_home_page=all_phones))
         return list(self.contact_cache)
 
     #how2FIX-IT-Alexei?
@@ -167,16 +185,27 @@ class ContactHelper:
         firstname = wd.find_element_by_name("firstname").get_attribute("value")
         lastname = wd.find_element_by_name("lastname").get_attribute("value")
         id = wd.find_element_by_name("id").get_attribute("value")
-        home = (None if wd.find_element_by_name("home").get_attribute("value") == '' else wd.find_element_by_name("home").get_attribute("value"))
-        work = (None if wd.find_element_by_name("work").get_attribute("value") == '' else wd.find_element_by_name("work").get_attribute("value"))
-        mobile = (None if wd.find_element_by_name("mobile").get_attribute("value") == '' else wd.find_element_by_name("mobile").get_attribute("value"))
-        phone2 = (None if wd.find_element_by_name("phone2").get_attribute("value") == '' else wd.find_element_by_name("phone2").get_attribute("value"))
-        all_phones_from_edit = [home]+[work]+[mobile]+[phone2]
-        all_phones_from_edit_witohout_nulls = (None if all_phones_from_edit is None else [])
-        for val in all_phones_from_edit:
-            if val != '' and val != None and all_phones_from_edit is not None :
-                all_phones_from_edit_witohout_nulls.append(self.clear(val))
-        return Contact(firstname=firstname, lastname=lastname, id=id, home=home, work=work, mobile=mobile, phone2=phone2, all_phones=all_phones_from_edit_witohout_nulls)
+        home = (None if wd.find_element_by_name("home").get_attribute("value") == "" else wd.find_element_by_name("home").get_attribute("value"))
+        work = (None if wd.find_element_by_name("work").get_attribute("value") == "" else wd.find_element_by_name("work").get_attribute("value"))
+        mobile = (None if wd.find_element_by_name("mobile").get_attribute("value") == "" else wd.find_element_by_name("mobile").get_attribute("value"))
+        phone2 = (None if wd.find_element_by_name("phone2").get_attribute("value") == "" else wd.find_element_by_name("phone2").get_attribute("value"))
+        return Contact(firstname=firstname, lastname=lastname, id=id, home=home, work=work, mobile=mobile, phone2=phone2) # all_phones=all_phones_from_edit_witohout_nulls
+
+    def get_all_contact_info_from_edit_page(self, index):
+        wd = self.app.wd
+        self.open_contact_to_edit_by_index(index)
+        firstname = wd.find_element_by_name("firstname").get_attribute("value")
+        lastname = wd.find_element_by_name("lastname").get_attribute("value")
+        id = wd.find_element_by_name("id").get_attribute("value")
+        home = (None if wd.find_element_by_name("home").get_attribute("value") == "" else wd.find_element_by_name("home").get_attribute("value"))
+        work = (None if wd.find_element_by_name("work").get_attribute("value") == "" else wd.find_element_by_name("work").get_attribute("value"))
+        mobile = (None if wd.find_element_by_name("mobile").get_attribute("value") == "" else wd.find_element_by_name("mobile").get_attribute("value"))
+        phone2 = (None if wd.find_element_by_name("phone2").get_attribute("value") == "" else wd.find_element_by_name("phone2").get_attribute("value"))
+        address = (None if wd.find_element_by_name("address").get_attribute("value") == "" else wd.find_element_by_name("address").get_attribute("value"))
+        email = (None if wd.find_element_by_name("email").get_attribute("value") == "" else wd.find_element_by_name("email").get_attribute("value"))
+        email2 = (None if wd.find_element_by_name("email2").get_attribute("value") == "" else wd.find_element_by_name("email2").get_attribute("value"))
+        email3 = (None if wd.find_element_by_name("email3").get_attribute("value") == "" else wd.find_element_by_name("email3").get_attribute("value"))
+        return Contact(firstname=firstname, lastname=lastname, id=id, home=home, work=work, mobile=mobile, phone2=phone2, address=address, email=email, email2=email2, email3=email3) # all_phones=all_phones_from_edit_witohout_nulls
 
     def get_contacts_from_view_page(self, index):
         wd = self.app.wd

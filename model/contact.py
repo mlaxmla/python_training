@@ -4,7 +4,7 @@ from sys import maxsize
 
 class Contact:
 
-    def __init__(self, firstname=None, middlename=None, lastname=None, nickname=None, title=None, company=None, address=None, home=None, mobile=None, work=None, fax=None, email=None, email2=None, email3=None, byear=None, ayear=None, address2=None, phone2=None, notes=None, phone=None, id=None, all_phones=None):
+    def __init__(self, firstname=None, middlename=None, lastname=None, nickname=None, title=None, company=None, address=None, home=None, mobile=None, work=None, fax=None, email=None, email2=None, email3=None, byear=None, ayear=None, address2=None, phone2=None, notes=None, phone=None, id=None, all_phones=None, all_phones_from_home_page=None, all_emails=None, all_emails_from_home_page=None):
         self.firstname = firstname
         self.middlename = middlename
         self.lastname = lastname
@@ -27,12 +27,15 @@ class Contact:
         self.phone = phone
         self.id = id
         self.all_phones = all_phones
+        self.all_phones_from_home_page = all_phones_from_home_page
+        self.all_emails = all_emails
+        self.all_emails_from_home_page = all_emails_from_home_page
 
     def __repr__(self):
         return "%s:%s:%s" % (self.id, self.lastname, self.firstname) # lepiej byłoby tak "%s:%s:%s" % (self.id, self.firstname, self.lastname), ale jeszcze nie umiem podmienić w liście elelemntu o określonym id, a na widoku contacts mamy sortowanie wg lastname, firstname
 
     def __eq__(self, other):
-        return (self.id is None or other.id is None or self.id == other.id) and self.firstname == other.firstname and self.lastname == other.lastname
+        return (self.id is None or other.id is None or self.id == other.id) and self.firstname == other.firstname and self.lastname == other.lastname # and self.address == other.address
 
     def id_or_max(self):
         if self.id:

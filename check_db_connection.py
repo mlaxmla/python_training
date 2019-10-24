@@ -1,15 +1,26 @@
 __author__ = 'mla'
 
 # import pymysql.cursors
-import mysql.connector
+# 2 import mysql.connector
+from fixture.db import DbFixture
 
 # connection = pymysql.connect(host="127.0.0.1", database="addressbook", user="root", password="")
-connection = mysql.connector.connect(host="127.0.0.1", database="addressbook", user="root", password="")
+# 2 connection = mysql.connector.connect(host="127.0.0.1", database="addressbook", user="root", password="")
+db = DbFixture(host="127.0.0.1", database="addressbook", user="root", password="")
 
 try:
-    cursor = connection.cursor()
-    cursor.execute("select * from group_list")
-    for row in cursor.fetchall():
-        print(row)
+    # 2 cursor = connection.cursor()
+    # 2 cursor.execute("select * from group_list")
+    # 2 for row in cursor.fetchall():
+    # 2     print(row)
+    # groups = db.get_group_list()
+    # for group in groups:
+    #    print(group)
+    # print(len(groups))
+    contacts = db.get_contact_list()
+    for contact in contacts:
+        print(contact)
+    print(len(contacts))
 finally:
-    connection.close()
+    # 2 connection.close()
+    db.destroy()

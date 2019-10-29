@@ -15,7 +15,7 @@ def test_delete_first_contact(app, db):
     # assert old_contacts == new_contacts
 
 
-def test_delete_some_contact(app, db):
+def test_delete_some_contact(app, db, check_ui):
     if len(db.get_contact_list()) == 0:
         app.contact.create(Contact(firstname="WarunkowoDodany"))
     # old_contacts = app.contact.get_contacts_list()
@@ -30,3 +30,6 @@ def test_delete_some_contact(app, db):
     # old_contacts[index:index+1] = []
     old_contacts.remove(contact)
     assert old_contacts == new_contacts
+    if check_ui:
+        assert sorted(old_contacts, key=Contact.id_or_max) == sorted(app.contact.get_contact_list(), key=Contact.id_or_max)
+

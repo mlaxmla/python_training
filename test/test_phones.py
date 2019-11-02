@@ -4,6 +4,19 @@ from random import randrange
 from model.contact import Contact
 
 
+def test_all_contacts_on_home_page_with_db(app, db):
+    list_range = len(db.get_contact_list())
+    for row in range(list_range):
+        contact_from_home_page = sorted(app.contact.get_all_contacts_list(), key=Contact.id_or_max)[row]
+        contact_from_db = sorted(db.get_contact_list(), key=Contact.id_or_max)[row]
+        assert sorted(contact_from_db.lastname) == sorted(contact_from_home_page.lastname)
+        assert sorted(contact_from_db.firstname) == sorted(contact_from_home_page.firstname)
+        assert sorted(address_clean(contact_from_db.address)) == sorted(contact_from_home_page.address)
+        assert sorted(merge_phones_like_on_home_page(contact_from_db)) == sorted(
+            contact_from_home_page.all_phones_from_home_page)
+        assert sorted(merge_emails_like_on_home_page(contact_from_db)) == sorted(
+            contact_from_home_page.all_emails_from_home_page)
+
 def test_all_details_on_home_page_with_db(app, db):
     contacts_from_home_page = app.contact.get_all_contacts_list()
     contacts_from_db = db.get_contact_list()
@@ -27,6 +40,9 @@ def test_phones_on_contact_view_page(app):
 
 def clear(s):
     return re.sub("[() -]", "", s)
+
+def address_clean(s):
+    return re.sub("  ", " ", s)
 
 def merge_phones_like_on_home_page(contact):
     return "\n".join(filter(lambda x: x != "",

@@ -5,9 +5,7 @@ import os.path
 import importlib
 import jsonpickle
 #import jsonpickle.ext.numpy as jsonpickle_numpy
-
 #jsonpickle_numpy.register_handlers()
-
 from fixture.application import Application
 from fixture.db import DbFixture
 

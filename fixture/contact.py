@@ -133,6 +133,14 @@ class ContactHelper:
         # submit update
         wd.find_element_by_name("update").click()
 
+    def choose_group_for_contact_by_id(self, id):
+        wd = self.app.wd
+        # check webdriver issue...
+        wd.find_element_by_xpath("//select[@name='to_group']//option[@value='%s']" % id).click()
+        # Potwierdź wybór przyciskiem
+        wd.find_element_by_xpath("//input[@value='Add to']").click()
+        self.open_home_page2()
+
     def count(self):
         wd = self.app.wd
         self.open_home_page2()

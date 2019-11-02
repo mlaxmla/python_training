@@ -127,6 +127,16 @@ class ContactHelper:
         self.open_home_page2()
         wd.find_element_by_xpath("//a[contains(@href, 'edit.php?id=%s')]" % id).click()
 
+    def choose_contact_by_index(self, index):
+        wd = self.app.wd
+        wd.find_elements_by_name("selected[]")[index].click()
+
+    def del_contact_from_group(self):
+        wd = self.app.wd
+        wd.find_element_by_xpath("//input[@name='remove']").click()
+        # powrót do grupy z której usunięto kontakt
+        wd.find_element_by_xpath("//a[contains(@href, './?group=')]").click()
+
     def modify(self, contact):
         wd = self.app.wd
         self.fill_contact_form(contact)
@@ -141,9 +151,18 @@ class ContactHelper:
         wd.find_element_by_xpath("//input[@value='Add to']").click()
         self.open_home_page2()
 
+    def choose_group_for_contact_del_by_id(self, id):
+        wd = self.app.wd
+        #self.otworz_strone_startowa()
+        wd.find_element_by_xpath("//select[@name='group']//option[@value='%s']" % id).click()
+
     def count(self):
         wd = self.app.wd
         self.open_home_page2()
+        return len(wd.find_elements_by_name("selected[]"))
+
+    def count_contacts_in_choosen_group(self):
+        wd = self.app.wd
         return len(wd.find_elements_by_name("selected[]"))
 
     contact_cache = None
